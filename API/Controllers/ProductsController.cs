@@ -4,16 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController(IgenericRepository<Product> repo) : ControllerBase
+public class ProductsController(IgenericRepository<Product> repo) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts(string? brand, 
-    string? type, string? sort)
+    public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts(
+        [FromQuery]ProductSpecParams specParams)
     {
-        var spec = new ProductSpecification(brand,type, sort);
-        var products = await repo.ListAsync(spec);
-        return Ok(products);
-        ///return Ok(await repo.GetProductsAsync(brand,type,sort));
+        var spec = new ProductSpecification(specParams);
+        return await CreatePagedResult(repo,spec,specParams.PageIndex,specParams.PageSize);
     }
 
     [HttpGet("{id:int}")]

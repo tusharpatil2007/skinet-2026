@@ -21,4 +21,6 @@ public interface IgenericRepository<T> where T : BaseEntity
     Task<bool> SaveAllAsync();
 
     bool Exits(int id);
+
+    Task<int> CountAsync(ISpecification<T> spec);
 }
